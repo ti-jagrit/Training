@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.saipal.entity.Tranning;
 import com.saipal.repository.TranningRepository;
@@ -22,10 +21,8 @@ public class TranningServiceImpl implements TranningService {
 	}
 
 	@Override
-	public Tranning updateTranning(Tranning tranning,long id) {
-		@SuppressWarnings("unused")
-		Tranning t1 = repository.findById(id)
-	            .orElseThrow(() -> new ResponseStatusException(404, "Tranning not found with id: " + id, null));
+	public Tranning updateTranning(Tranning tranning) {
+	
 		return repository.save(tranning);
 
 	}

@@ -32,6 +32,7 @@ public class Person {
 	@Column(name = "fullname")
 	private String fullName;
 
+	
 	private int gender;
 
 	private String address;

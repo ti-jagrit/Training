@@ -1,6 +1,6 @@
 package com.saipal.controller;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.saipal.entity.UserInfo;
-import com.saipal.response.UserInfoResponse;
 import com.saipal.service.UserInfoService;
 import com.saipal.utils.UniqueIdGenerator;
 
@@ -32,53 +31,99 @@ public class UserInfoController {
 	private PasswordEncoder passwordEncoder;
 
 	@GetMapping
-	public ResponseEntity<List<?>> getUserInfos() throws Exception {
-		return ResponseEntity.ok(userInfoService.findalUserInfos());
+	public ResponseEntity<Map<String, Object>> getUserInfos() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			response.put("status", 1);
+			response.put("data", userInfoService.findalUserInfos());
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+		return ResponseEntity.ok(response);
+
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getUserInfoById(@PathVariable long id) throws Exception {
-		return ResponseEntity.ok(userInfoService.findUserInfoResponse(id));
-
+	public ResponseEntity<Map<String, Object>> getUserInfoById(@PathVariable long id) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			response.put("status", 1);
+			response.put("data", userInfoService.findUserInfoResponse(id));
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping
-	public ResponseEntity<UserInfoResponse> saveUserInfo(@RequestBody UserInfo userInfo) throws Exception {
-		userInfo.setId(UniqueIdGenerator.generateUniqueId());
-		userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
+	public ResponseEntity<Map<String, Object>> saveUserInfo(@RequestBody UserInfo userInfo) {
 
-		return ResponseEntity.ok(userInfoService.saveUserInfo(userInfo));
+		Map<String, Object> response = new HashMap<>();
+		try {
+			userInfo.setId(UniqueIdGenerator.generateUniqueId());
+			userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
+			userInfoService.saveUserInfo(userInfo);
+			response.put("status", 1);
+			response.put("message", "User Info Saved Successfully.");
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+		return ResponseEntity.ok(response);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateUserInfo(@PathVariable Long id, @RequestBody UserInfo userInfo) throws Exception {
-		UserInfo ui = userInfoService.findUserInfoById(id);
-		userInfo.setPassword(ui.getPassword());
-
-		return ResponseEntity.ok((userInfoService.updateUserInfo(userInfo)));
+	public ResponseEntity<Map<String, Object>> updateUserInfo(@PathVariable Long id, @RequestBody UserInfo userInfo) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			UserInfo ui = userInfoService.findUserInfoById(id);
+			userInfo.setPassword(ui.getPassword());
+			userInfoService.updateUserInfo(userInfo);
+			response.put("status", 1);
+			response.put("message", "User Info Updated Succeessfully");
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+		return ResponseEntity.ok(response);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deletetraining(@PathVariable long id) throws Exception {
-		userInfoService.deleteUserInfo(id);
-		return ResponseEntity.ok("User Info Deleted");
-
+	public ResponseEntity<Map<String, Object>> deletetraining(@PathVariable long id) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			userInfoService.deleteUserInfo(id);
+			response.put("status", 1);
+			response.put("message", "User Info Deleted Succeessfully");
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("/pass/{id}")
-	public ResponseEntity<?> ChangePassword(@PathVariable long id, @RequestBody Map<String, String> request)
-			throws Exception {
-		String cp = request.get("cp");
-		String np = request.get("np");
+	public ResponseEntity<Map<String, Object>> ChangePassword(@PathVariable long id,
+			@RequestBody Map<String, String> request) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			String cp = request.get("cp");
+			String np = request.get("np");
+			UserInfo userInfo = userInfoService.findUserInfoById(id);
+			if (passwordEncoder.matches(cp, userInfo.getPassword())) {
+				userInfo.setPassword(passwordEncoder.encode(np));
+				userInfoService.updateUserInfo(userInfo);
+				response.put("status", 1);
+				response.put("message", "Password Changed Succeessfully");
+			}
 
-		UserInfo userInfo = userInfoService.findUserInfoById(id);
-		if (passwordEncoder.matches(cp, userInfo.getPassword())) {
-			userInfo.setPassword(passwordEncoder.encode(np));
-			userInfoService.updateUserInfo(userInfo);
-			return ResponseEntity.ok("Password Changed");
-		} else {
-			return ResponseEntity.badRequest().body("Password Doesnt Match");
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", "Password Doesnt Match");
+			response.put("details", e.getMessage());
 		}
-
+		return ResponseEntity.ok(response);
 	}
 }

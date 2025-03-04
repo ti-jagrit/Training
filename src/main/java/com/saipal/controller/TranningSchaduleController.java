@@ -1,6 +1,7 @@
 package com.saipal.controller;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,38 +29,78 @@ public class TranningSchaduleController {
 	private TranningScheduleService tScheduleService;
 
 	@PostMapping()
-	public ResponseEntity<TranningSchedule> AddPersson(@RequestBody TranningSchedule ts) throws Exception {
-		ts.setId(UniqueIdGenerator.generateUniqueId());
-		return ResponseEntity.ok(tScheduleService.saveTranningSchedule(ts));
+	public ResponseEntity<Map<String, Object>> saveTrainingSchcedule(@RequestBody TranningSchedule ts){
+		Map<String, Object> response = new HashMap<>();
+		try {
+			ts.setId(UniqueIdGenerator.generateUniqueId());
+			tScheduleService.saveTranningSchedule(ts);
+			response.put("status", 1);
+			response.put("message", "Training Schedule Saved.");
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+		return ResponseEntity.ok(response);
 	}
-
 	@GetMapping()
-	public ResponseEntity<List<TranningSchedule>> allPersons() throws Exception {
-		return ResponseEntity.ok(tScheduleService.getallTranningSchedules());
+	public ResponseEntity<Map<String, Object>> getAllTraningSchedule() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			response.put("status", 1);
+			response.put("data", tScheduleService.getallTranningSchedules());
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> GetTranningScheduleById(@PathVariable long id) throws Exception {
-		TranningSchedule tSchedule = tScheduleService.getTranninSchedule(id);
-		if (tSchedule != null) {
-			return ResponseEntity.ok(tSchedule);
-		} else {
-			return ResponseEntity.badRequest().body("Tranning Schedule not Found with id: " + id);
+	public ResponseEntity<Map<String, Object>> GetTranningScheduleById(@PathVariable long id) {
+
+		Map<String, Object> response = new HashMap<>();
+		try {
+			tScheduleService.getTranninSchedule(id);
+			response.put("status", 1);
+			response.put("data", tScheduleService.getTranninSchedule(id));
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
 		}
 
+		return ResponseEntity.ok(response);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateTrainingSchedulee(@PathVariable Long id, @RequestBody TranningSchedule tranningSchedule)
-			throws Exception {
-		return ResponseEntity.ok(tScheduleService.updateTranningSchedule(tranningSchedule));
+	public ResponseEntity<Map<String, Object>> updateTrainingSchedulee(@PathVariable Long id, @RequestBody TranningSchedule tranningSchedule) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			tScheduleService.updateTranningSchedule(tranningSchedule);
+			response.put("status", 1);
+			response.put("message", "Traning Schedule Updated");
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+
+		return ResponseEntity.ok(response);
 
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deletetraining(@PathVariable long id) throws Exception {
-		tScheduleService.deleteTranningSchedule(id);
-		return ResponseEntity.ok("Training Deleted");
+	public ResponseEntity<Map<String, Object>> deleteTrainingSchedule(@PathVariable long id) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			tScheduleService.deleteTranningSchedule(id);
+			response.put("status", 1);
+			response.put("message", "Training Schedule Deleted Successfully");
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+
+		return ResponseEntity.ok(response);
 
 	}
 

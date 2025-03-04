@@ -1,16 +1,10 @@
 package com.saipal.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.swing.text.StyledEditorKit.ForegroundAction;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +20,6 @@ import com.saipal.utils.UniqueIdGenerator;
 
 @RestController
 @RequestMapping("api/person-type")
-@CrossOrigin(origins = "http://localhost:3000")
 public class PersonTypeController {
 	
 	@Autowired
@@ -37,70 +30,81 @@ public class PersonTypeController {
 	private PersonTypeService personTypeService;
 
 	@PostMapping()
-	public ResponseEntity<PersonType> AddPersson(@RequestBody PersonType personType)throws Exception {
+	public ResponseEntity<Map<String, Object>> AddPersonType(@RequestBody PersonType personType)throws Exception {
 
-		personType.setId(UniqueIdGenerator.generateUniqueId());
-		return ResponseEntity.ok(personTypeService.savePersonType(personType));
-	}
-
-	@GetMapping()
-//	public ResponseEntity<List<PersonType>> allPersons() throws Exception{
-	
-	//for converting uuid to string for json request and response
-		public ResponseEntity<?> allPersons() throws Exception{
-		
-		  try {
-			 List<Map<String, Object>> result= personTypeService.findAllPersonTypes()
-					 .stream().map(personType -> {
-			            Map<String, Object> response = new HashMap<>();
-			            response.put("id", String.valueOf(personType.getId())); 
-			            response.put("code", personType.getCode());
-			            response.put("personType", personType.getPersonType());
-			            return response;
-			        })
-			        .collect(Collectors.toList());
-			 return ResponseEntity.ok(result);
-		  }catch (Exception e) {
-			    Map<String, String> errorResponse = new HashMap<>();
-		        errorResponse.put("error", "Failed to fetch person types");
-		        errorResponse.put("details", e.getMessage());
-		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);		}
-//		return ResponseEntity.ok(personTypeService.findAllPersonTypes());
-	}
-	@GetMapping("/{id}")
-	public ResponseEntity<?> getPersonById(@PathVariable long id) throws Exception{
-	try {
-		PersonType personType=personTypeService.findPersonTypeById(id);
 		Map<String, Object> response = new HashMap<>();
-        response.put("id", String.valueOf(personType.getId()));
-        response.put("code", personType.getCode());
-        response.put("personType", personType.getPersonType());
+		try {
+			personType.setId(UniqueIdGenerator.generateUniqueId());
+			personTypeService.savePersonType(personType);
+			response.put("status", 1);
+			response.put("message", "Person Type Saved Successfully");
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
 
-        return ResponseEntity.ok(response);
-    } catch (Exception e) {
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", "PersonType not found");
-        errorResponse.put("details", e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        
-    }
-			
+		return ResponseEntity.ok(response);
+	}
+	
+	@GetMapping()
+		public ResponseEntity<Map<String, Object>>allPersons() throws Exception{
 		
+		Map<String, Object> response = new HashMap<>();
+		try {
+			response.put("status", 1);
+			response.put("data",personTypeService.findAllPersonTypes());
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+
+		return ResponseEntity.ok(response);
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<Map<String, Object>> getPersonById(@PathVariable long id) throws Exception{
+	
+		Map<String, Object> response = new HashMap<>();
+		try {
+			response.put("status", 1);
+			response.put("data",personTypeService.findPersonTypeById(id));
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+
+		return ResponseEntity.ok(response);		
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updatePerson(@PathVariable long id, @RequestBody PersonType personType) throws Exception{
-		PersonType p = personTypeService.updatePersonType(personType);
+	public ResponseEntity<Map<String, Object>> updatePerson(@PathVariable long id, @RequestBody PersonType personType) throws Exception{
+		
+		Map<String, Object> response = new HashMap<>();
+		try {
+			personTypeService.updatePersonType(personType);
+			response.put("status", 1);
+			response.put("message","Person Type Update Successfully");
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
 
-		return ResponseEntity.ok(p);
-
+		return ResponseEntity.ok(response);		
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deletePerson(@PathVariable long id) throws Exception{
-		personTypeService.deletePersonType(id);
-			return ResponseEntity.ok("Person Type Deleted");
+	public ResponseEntity<Map<String, Object>> deletePerson(@PathVariable long id) throws Exception{
+		Map<String, Object> response = new HashMap<>();
+		try {
+			personTypeService.deletePersonType(id);
+			response.put("status", 1);
+			response.put("message","Person Type Deleted Successfully");
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
 
+		return ResponseEntity.ok(response);		
 	}
 	
 

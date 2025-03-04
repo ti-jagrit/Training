@@ -26,13 +26,14 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain dafultSecurityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable())
-		.cors().and()
-		.authorizeHttpRequests(request ->	request
-						.requestMatchers("/public/api/**").permitAll()
-				.anyRequest().authenticated())
-		.sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.addFilterBefore(JwtFilter(), UsernamePasswordAuthenticationFilter.class).httpBasic(withDefaults());
+        http.csrf(csrf -> csrf.disable())
+                .cors(withDefaults())
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers("/public/api/**","/","/WEB-INF/**", "/image/**").permitAll()
+                        .anyRequest().authenticated())
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(JwtFilter(), UsernamePasswordAuthenticationFilter.class)
+                .httpBasic(httpBasic -> httpBasic.disable());
 		return http.build();
 	}
 

@@ -1,6 +1,7 @@
 package com.saipal.controller;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,35 +27,72 @@ public class UserTypeController {
 	private UserTyperService userTyperService;
 
 	@PostMapping()
-	public ResponseEntity<UserType> addUserType(@RequestBody UserType userType) {
-		userType.setId(UniqueIdGenerator.generateUniqueId());
-		return ResponseEntity.ok(userTyperService.saveUserType(userType));
+	public ResponseEntity<Map<String, Object>> addUserType(@RequestBody UserType userType) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			userType.setId(UniqueIdGenerator.generateUniqueId());
+			userTyperService.saveUserType(userType);
+			response.put("status", 1);
+			response.put("message", "User Type Saved Succeessfully");
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping()
-	public ResponseEntity<List<UserType>> GetALlUserType() {
-		return ResponseEntity.ok(userTyperService.findAllUserTypes());
+	public ResponseEntity<Map<String, Object>> GetALlUserType() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			response.put("status", 1);
+			response.put("data", userTyperService.findAllUserTypes());
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> GetUserTypeById(@PathVariable long id) throws Exception {
-		return ResponseEntity.ok(userTyperService.findUserTypeById(id));
+	public ResponseEntity<Map<String, Object>> GetUserTypeById(@PathVariable long id) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			response.put("status", 1);
+			response.put("data", userTyperService.findUserTypeById(id));
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+		return ResponseEntity.ok(response);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateUserType(@PathVariable Long id, @RequestBody UserType userType) throws Exception {
-		return ResponseEntity.ok(userTyperService.updateUserType(userType));
-
+	public ResponseEntity<Map<String, Object>> updateUserType(@PathVariable Long id, @RequestBody UserType userType) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			userTyperService.updateUserType(userType);
+			response.put("status", 1);
+			response.put("message", "User Type Updated Succeessfully");
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
+		}
+		return ResponseEntity.ok(response);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteUserType(@PathVariable long id) throws Exception {
-		UserType userType = userTyperService.findUserTypeById(id);
-		if (userType == null) {
-			return ResponseEntity.badRequest().body("User Type Doesnt exists with Id: " + id);
-		} else {
+	public ResponseEntity<Map<String, Object>> deleteUserType(@PathVariable long id) {
+		Map<String, Object> response = new HashMap<>();
+		try {
 			userTyperService.deleteUserType(id);
-			return ResponseEntity.ok("User Type Deleted");
+			response.put("status", 1);
+			response.put("message", "User Type Deleted Succeessfully");
+		} catch (Exception e) {
+			response.put("status", 0);
+			response.put("message", e.getMessage());
 		}
+		return ResponseEntity.ok(response);
+
 	}
 }
