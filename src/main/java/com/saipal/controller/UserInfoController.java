@@ -91,7 +91,7 @@ public class UserInfoController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> deletetraining(@PathVariable long id) {
+	public ResponseEntity<Map<String, Object>> deleteUserInfo(@PathVariable long id) {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			userInfoService.deleteUserInfo(id);
