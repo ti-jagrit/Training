@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.saipal.entity.UserInfo;
+import com.saipal.entity.UserType;
 import com.saipal.repository.UserInfoRepository;
 import com.saipal.response.UserInfoResponse;
 import com.saipal.service.UserInfoService;
@@ -18,6 +19,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 	@Autowired
 	private UserInfoRepository repository;
 
+	
 	@Override
 	public UserInfoResponse saveUserInfo(UserInfo userInfo) {
 		UserInfo savedUserInfo = repository.save(userInfo);
@@ -87,6 +89,15 @@ public class UserInfoServiceImpl implements UserInfoService {
 	public UserInfo findUserInfoById(Long id) {
 		// TODO Auto-generated method stub
 		return repository.findById(id).get();
+	}
+
+	@Override
+	public boolean findByUserType(UserType userType) {
+		List<UserInfo> user= repository.findByUserType(userType);
+		if(user.isEmpty()) {
+			return false;
+		}
+		return true;
 	}
 
 }

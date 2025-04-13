@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 
 import com.saipal.entity.UserType;
 import com.saipal.repository.UserTypeRepository;
-import com.saipal.service.UserTyperService;
+import com.saipal.service.UserTypeService;
 
 @Service
-public class UserTypeServiceImpl implements UserTyperService {
+public class UserTypeServiceImpl implements UserTypeService {
 	
 	@Autowired
 	private UserTypeRepository repository;

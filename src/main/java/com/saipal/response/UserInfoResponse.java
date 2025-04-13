@@ -1,5 +1,7 @@
 package com.saipal.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.saipal.entity.Person;
 import com.saipal.entity.UserType;
 
@@ -10,6 +12,8 @@ import lombok.Setter;
 @Setter
 public class UserInfoResponse {
 
+	@JsonProperty("id")
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private long id;
 	private String loginName;
 	private Person person;

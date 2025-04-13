@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.saipal.entity.UserType;
-import com.saipal.service.UserTyperService;
+import com.saipal.service.UserInfoService;
+import com.saipal.service.UserTypeService;
 import com.saipal.utils.UniqueIdGenerator;
 
 @RestController
@@ -24,7 +25,9 @@ public class UserTypeController {
 	UniqueIdGenerator uniqueIdGenerator;
 
 	@Autowired
-	private UserTyperService userTyperService;
+	private UserTypeService userTyperService;
+	@Autowired 
+	private UserInfoService userInfoService;
 
 	@PostMapping()
 	public ResponseEntity<Map<String, Object>> addUserType(@RequestBody UserType userType) {
@@ -85,9 +88,16 @@ public class UserTypeController {
 	public ResponseEntity<Map<String, Object>> deleteUserType(@PathVariable long id) {
 		Map<String, Object> response = new HashMap<>();
 		try {
+			if(!userInfoService.findByUserType(userTyperService.findUserTypeById(id))) {
+			
 			userTyperService.deleteUserType(id);
 			response.put("status", 1);
 			response.put("message", "User Type Deleted Succeessfully");
+			}
+			else {
+				response.put("status", 0);
+				response.put("message", "Cannot Delete, User Exist in User Type");
+			}
 		} catch (Exception e) {
 			response.put("status", 0);
 			response.put("message", e.getMessage());

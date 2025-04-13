@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.saipal.entity.UserType;
 
-public interface UserTyperService {
+public interface UserTypeService {
 	public UserType saveUserType(UserType userType);
 	public UserType updateUserType(UserType userType);
 	public List<UserType> findAllUserTypes();

@@ -1,10 +1,13 @@
 package com.saipal.entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,6 +25,8 @@ import lombok.NoArgsConstructor;
 public class TranningSchedule {
 	@Id
 	@Column(name = "scheduleid")
+	@JsonProperty("id")
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private long id;
 	
 	@ManyToOne
@@ -30,14 +35,14 @@ public class TranningSchedule {
 	private Tranning tranning;
 	
 	@Column(name = "startdate")
-	private LocalDateTime startDate;
+	private LocalDate startDate;
 	
 	@Column(name = "starttime")
 	private LocalTime startTime;
 	
 
 	@Column(name = "enddate")
-	private LocalDateTime endDate;
+	private LocalDate endDate;
 	
 	@Column(name = "endtime")
 	private LocalTime endTime;

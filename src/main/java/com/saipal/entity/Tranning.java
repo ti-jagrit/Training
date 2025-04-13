@@ -1,5 +1,8 @@
 package com.saipal.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -14,12 +17,14 @@ public class Tranning {
 	
 	@Id
 	@Column(name = "trainingid")
+	@JsonProperty("id")
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private long id;
 	private String code;
 	@Column(name = "training_name_np")
-	private String tranningNameNp ;
+	private String trainingNameNp ;
 	@Column(name = "training_name_en")
-	private String tranningNameEn;
+	private String trainingNameEn;
 	private int approved;
 
 
